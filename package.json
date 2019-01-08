@@ -1,0 +1,17 @@
+{
+  "name": "timer-it3k",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/mild20091931/timer-it3k.git",
+  "author": "Mild-TN <mild20091931@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "next": "^7.0.2",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0",
+    "socket.io": "^2.2.0"
+  },
+  "scripts": {
+    "dev": "next"
+  }
+}
