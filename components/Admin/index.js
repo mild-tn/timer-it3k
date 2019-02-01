@@ -22,7 +22,8 @@ class Index extends React.Component {
     seconds: 0,
     timer: 0,
     resume: {},
-    message : ''
+    message : '',
+    event : 0,
   }
 
   secondsToTime(secs) {
@@ -31,12 +32,20 @@ class Index extends React.Component {
     let minutes = Math.floor(divisor_for_minutes / 60);
     let divisor_for_seconds = divisor_for_minutes % 60;
     let seconds = Math.ceil(divisor_for_seconds);
-    let obj = {
-      "h": ('0' + hours).slice(-2),
-      "m": ('0' + minutes).slice(-2),
-      "s": ('0' + seconds).slice(-2)
-    };
-    return obj;
+    if(secs < 0){
+      let obj = {
+        "h": ('0' + hours).slice(2),
+        "m": ('-0'+('0' + minutes).slice(2)),
+        "s": ('-0'+('0' + seconds).slice(2))
+      };
+      return obj
+    }
+      let obj = {
+        "h": ('0' + hours).slice(-2),
+        "m": ('0' + minutes).slice(-2),
+        "s": ('0' + seconds).slice(-2)
+      }
+      return obj
   }
 
   componentDidMount() {
@@ -44,13 +53,15 @@ class Index extends React.Component {
     this.setState({ time: timeLeftVar });
   }
   
-  setTime(timer) {
+  setTime(timer,event) {
     let timeLeftVar = this.secondsToTime(timer);
     timeDefualt = timer
     this.setState({
       seconds: timer,
-      time: timeLeftVar
+      time: timeLeftVar,
+      event : event
     })
+    socket.emit('timeFromAdmin',{"time":this.state.seconds,"event":this.state.event})
   }
   
   startTime = async(message) => {
@@ -59,7 +70,7 @@ class Index extends React.Component {
     }else{
       this.countDown()
     }
-    await socket.emit('timeFromAdmin',this.state.seconds)
+    socket.emit('startTime',this.state.event)
   }
   
   countDown = async() => {
@@ -73,27 +84,34 @@ class Index extends React.Component {
 
   stopTimer() {
     clearInterval(intervalTime);
+    socket.emit('stopTime','stop')
   }
 
   resume = () => {
     this.countDown()
+    socket.emit('resumeTime','resume')
   }
 
   reset = () => {
-    let timeLeftVar = this.secondsToTime(timeDefualt)
+    clearInterval(intervalTime);
+    let timeLeftVar = this.secondsToTime(0)
     this.setState({
-      seconds: timeDefualt,
-      time: timeLeftVar
+      seconds: 0,
+      time: timeLeftVar,
     })
+    this.setTime(0)
+    socket.emit('resetTime',{"reset":'reset',"timeDefult":timeDefualt})
   }
 
-  setTimeShow(time) {
+  setTimeShow(time,event) {
       let timeLeftVar = this.secondsToTime(time)
       this.setState({
         seconds: time,
         time: timeLeftVar,
         message : 'show',
+        event : event
       })
+      socket.emit('timeFromAdmin',{"time":this.state.seconds,"event":this.state.event})
   }
 
   timeForward() {
@@ -111,7 +129,7 @@ class Index extends React.Component {
         <Container>
           <Row>
             <Col className="d-flex justify-content-center">
-              <FontTime>{this.state.time.h} : {this.state.time.m} : {this.state.time.s}</FontTime>
+              <FontTime> {this.state.time.m} : {this.state.time.s}</FontTime>
             </Col>
           </Row>
           <Row>
@@ -124,9 +142,9 @@ class Index extends React.Component {
           </Row>
           <Row>
             <Col className='d-flex justify-content-center'>
-              <ButtonEvent onClick={() => this.setTime(3)}>เตรียมสถานที่</ButtonEvent>
-              <ButtonEvent onClick={() => this.setTimeShow(0)}>การแสดง</ButtonEvent>
-              <ButtonEvent onClick={() => this.setTime(2)}>เก็บสถานที่</ButtonEvent>
+              <ButtonEvent onClick={() => this.setTime(180,1)}>เตรียมสถานที่(3 นาที)</ButtonEvent>
+              <ButtonEvent onClick={() => this.setTimeShow(0,2)}>การแสดง (12-15 นาที)</ButtonEvent>
+              <ButtonEvent onClick={() => this.setTime(2,3)}>เก็บสถานที่ (2 นาที)</ButtonEvent>
             </Col>
           </Row>
         </Container>

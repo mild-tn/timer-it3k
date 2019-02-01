@@ -2,8 +2,6 @@ import React from 'react'
 import { Container, Row, Col } from 'reactstrap'
 import fontTime from '../../config/fonts'
 import styled from 'styled-components'
-import ButtonTimer from '../Core/Button';
-import ButtonEvent from '../Core/Button';
 import ENV from '../../config/envConfig'
 import socketIOClient from 'socket.io-client'
 import Footer from '../Core/Footer'
@@ -34,13 +32,16 @@ let intervalTime;
 
 let timeDefualt;
 
+const  setSituation = ['','เตรียมสถานที่','การแสดง','เก็บสถานที่'];
+
 class Index extends React.Component {
   state = {
     time: {},
     seconds: 0,
     timer: 0,
     resume: {},
-    message: ''
+    message: '',
+    event: 0,
   }
 
   secondsToTime(secs) {
@@ -49,6 +50,14 @@ class Index extends React.Component {
     let minutes = Math.floor(divisor_for_minutes / 60);
     let divisor_for_seconds = divisor_for_minutes % 60;
     let seconds = Math.ceil(divisor_for_seconds);
+    if(secs < 0){
+      let obj = {
+        "h": ('0' + hours).slice(2),
+        "m": ('-0'+('0' + minutes).slice(2)),
+        "s": ('-0'+('0' + seconds).slice(2))
+      };
+      return obj
+    }
     let obj = {
       "h": ('0' + hours).slice(-2),
       "m": ('0' + minutes).slice(-2),
@@ -57,31 +66,37 @@ class Index extends React.Component {
     return obj;
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     let timeLeftVar = this.secondsToTime(this.state.seconds);
     this.setState({ time: timeLeftVar });
     this.setTime()
+    this.startTime()
+    this.stopTimer()
+    this.resume()
+    this.reset()
   }
 
-  async setTime() {
-    await socket.on('time',(timer) => {
-      let timeLeftVar = this.secondsToTime(timer);
-      timeDefualt = timer
+  setTime() {
+    socket.on('time',(timer) => {
+      let timeLeftVar = this.secondsToTime(timer.time);
       this.setState({
-        seconds: timer,
-        time: timeLeftVar
+        seconds: timer.time,
+        time: timeLeftVar,
+        event: timer.event
       })
-      console.log(timer)
-      this.startTime()
+      timeDefualt = timer.time
     })
   }
 
   startTime = (message) => {
-    if (message === 'show') {
-      this.timeForward()
-    } else {
-      this.countDown()
-    }
+    socket.on('start',(start) => {
+      console.log(start)
+      if(start === 1 || start === 3){
+        this.countDown()
+      }else{
+        this.timeForward()
+      }
+    })
   }
 
   countDown = () => {
@@ -94,18 +109,30 @@ class Index extends React.Component {
   }
 
   stopTimer() {
-    clearInterval(intervalTime);
+    socket.on('stop',(stop) => {
+      if(stop === 'stop'){
+        clearInterval(intervalTime);
+      }
+    })
   }
 
   resume = () => {
-    this.countDown()
+    socket.on('resume',(resume)=>{
+      if(resume === 'resume'){
+        this.countDown()
+      }
+    })
   }
 
   reset = () => {
-    let timeLeftVar = this.secondsToTime(timeDefualt)
-    this.setState({
-      seconds: timeDefualt,
-      time: timeLeftVar
+    socket.on('reset',(reset)=>{
+      clearInterval(intervalTime);
+      let timeLeftVar = this.secondsToTime(0)
+      this.setState({
+        seconds: 0,
+        time: timeLeftVar
+      })
+
     })
   }
 
@@ -136,7 +163,12 @@ class Index extends React.Component {
           </Row>
           <Row>
             <Col className="d-flex justify-content-center">
-              <FontTime>{this.state.time.h} : {this.state.time.m} : {this.state.time.s}</FontTime>
+              <FontTime>{this.state.time.m} : {this.state.time.s}</FontTime>
+            </Col>
+          </Row>
+          <Row>
+            <Col className="d-flex justify-content-center">
+              <FontTime>{setSituation[this.state.event]}</FontTime>
             </Col>
           </Row>
         </Container>
