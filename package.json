@@ -13,7 +13,6 @@
     "next": "^7.0.2",
     "next-compose-plugins": "^2.1.1",
     "react": "^16.7.0",
-    "react-compound-timer": "^1.0.7",
     "react-dom": "^16.7.0",
     "reactstrap": "^7.1.0",
     "socket.io": "^2.2.0",
