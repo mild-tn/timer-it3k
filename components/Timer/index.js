@@ -6,11 +6,29 @@ import ButtonTimer from '../Core/Button';
 import ButtonEvent from '../Core/Button';
 import ENV from '../../config/envConfig'
 import socketIOClient from 'socket.io-client'
+import Footer from '../Core/Footer'
+import Logo from '../Core/Logo'
+
+const Landing = styled.div`
+  height: 100%;
+  width : 100%;
+  left: 0;
+  bottom: 0;
+  position: fixed;
+  padding-top: 20px;
+`;
 
 const socket = socketIOClient(ENV.PATH_SOCKET)
 
 const FontTime = styled.div`
+  color: white;
   font-size : ${fontTime.timeout};
+  @media (max-width:990px) {
+    font-size : 130px;
+	}
+  @media (max-width:770px) {
+    font-size : 100px;
+	}
 `
 let intervalTime;
 
@@ -44,7 +62,7 @@ class Index extends React.Component {
     this.setState({ time: timeLeftVar });
     this.setTime()
   }
-  
+
   async setTime() {
     await socket.on('time',(timer) => {
       let timeLeftVar = this.secondsToTime(timer);
@@ -111,15 +129,19 @@ class Index extends React.Component {
 
   render() {
     return (
-      <Container fluid>
+      <Landing fluid>
         <Container>
+          <Row className="d-flex justify-content-center mt-5">
+            <Logo />
+          </Row>
           <Row>
             <Col className="d-flex justify-content-center">
               <FontTime>{this.state.time.h} : {this.state.time.m} : {this.state.time.s}</FontTime>
             </Col>
           </Row>
         </Container>
-      </Container>
+        <Footer />
+      </Landing>
     )
   }
 }
