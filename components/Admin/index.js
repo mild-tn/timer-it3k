@@ -159,9 +159,9 @@ class Index extends React.Component {
           </Row>
           <Row>
             <Col className='d-flex justify-content-center'>
-              <ButtonEvent onClick={() => this.setTime(2,1)}>เตรียมสถานที่(3 นาที)</ButtonEvent>
+              <ButtonEvent onClick={() => this.setTime(180,1)}>เตรียมสถานที่(3 นาที)</ButtonEvent>
               <ButtonEvent onClick={() => this.setTimeShow(0,2)}>การแสดง (12-15 นาที)</ButtonEvent>
-              <ButtonEvent onClick={() => this.setTime(2,3)}>เก็บสถานที่ (2 นาที)</ButtonEvent>
+              <ButtonEvent onClick={() => this.setTime(120,3)}>เก็บสถานที่ (2 นาที)</ButtonEvent>
             </Col>
             <ButtonEvent onClick={this.color}>black</ButtonEvent>
           </Row>
