@@ -79,7 +79,7 @@ class Index extends React.Component {
   
   countDown = async() => {
     intervalTime = setInterval(() => {
-      if(this.state.time.h==='00',this.state.time.m==='00',this.state.time.s==='00'){
+      if(this.state.time.h==='00'&&this.state.time.m==='00'&&this.state.time.s==='00'){
         clearInterval(intervalTime)
         this.setTimeShow(0,2)
         intervalTime = setInterval(() => {
