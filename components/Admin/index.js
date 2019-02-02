@@ -6,6 +6,7 @@ import ButtonTimer from '../Core/Button';
 import ButtonEvent from '../Core/Button';
 import ENV from '../../config/envConfig'
 import socketIOClient from 'socket.io-client'
+import Countdown from './Countdown'
 
 const socket = socketIOClient(ENV.PATH_SOCKET)
 
@@ -54,6 +55,7 @@ class Index extends React.Component {
   }
   
   setTime(timer,event) {
+    // let date = new Date().setMinutes(new Date().getMinutes() + 5);
     let timeLeftVar = this.secondsToTime(timer);
     timeDefualt = timer
     this.setState({
