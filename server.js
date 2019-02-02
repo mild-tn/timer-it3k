@@ -33,6 +33,10 @@ io.on('connection', function(socket){
   socket.on('disconnect', function(){
     console.log('user disconnected');
   });
+  socket.on('colorchange',(req)=>{
+    console.log('ppopp')
+    io.sockets.emit('colorchanges',req)
+  })
 });
 
 

@@ -10,5 +10,6 @@ export default {
   caption: '12px',
   subcaption: '10px',
   timeout : '150px',
-  color:'black'
+  color:'black',
+  colorpro:'white'
 }

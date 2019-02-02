@@ -20,7 +20,7 @@ const socket = socketIOClient(ENV.PATH_SOCKET)
 
 const FontTime = styled.div`
   font-family: 'Kanit', sans-serif;
-  color: white;
+  color: ${props=>props.color};
   font-size : ${fontTime.timeout};
   @media (max-width:990px) {
     font-size : 130px;
@@ -68,9 +68,10 @@ class Index extends React.Component {
     if(secs < 0){
       let obj = {
         "h": ('0' + hours).slice(2),
-        "m": ('-0'+('0' + minutes).slice(2)),
-        "s": ('-0'+('0' + seconds).slice(2))
+        "m": (('0' + minutes).slice(2)),
+        "s": (('0' + seconds).slice(2))
       };
+      fontTime.colorpro ='red'
       return obj
     }
     let obj = {
@@ -89,6 +90,9 @@ class Index extends React.Component {
     this.stopTimer()
     this.resume()
     this.reset()
+    socket.on('colorchanges',(res)=>{
+      fontTime.colorpro=res;
+    })
   }
 
   setTime() {
@@ -114,8 +118,18 @@ class Index extends React.Component {
     })
   }
 
-  countDown = () => {
+  countDown = async() => {
     intervalTime = setInterval(() => {
+      if(this.state.time.h==='00',this.state.time.m==='00',this.state.time.s==='00'){
+        clearInterval(intervalTime)
+        this.setTimeShow(0,0)
+        intervalTime = setInterval(() => {
+          this.setState({
+            time: this.secondsToTime(this.state.seconds + 1),
+            seconds: this.state.seconds + 1,
+          })
+        },1000)
+      }
       this.setState({
         time: this.secondsToTime(this.state.seconds - 1),
         seconds: this.state.seconds - 1,
@@ -178,7 +192,7 @@ class Index extends React.Component {
           </Row>
           <Row>
             <Col className="d-flex justify-content-center">
-              <FontTime>{this.state.time.m} : {this.state.time.s}</FontTime>
+              <FontTime color={fontTime.colorpro}>{this.state.time.m} : {this.state.time.s}</FontTime>
             </Col>
           </Row>
           <Row>

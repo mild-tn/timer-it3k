@@ -12,6 +12,7 @@ const socket = socketIOClient(ENV.PATH_SOCKET)
 
 const FontTime = styled.div`
   font-size : ${fontTime.timeout};
+  color :${props => props.color}
 `
 let intervalTime;
 
@@ -36,9 +37,10 @@ class Index extends React.Component {
     if(secs < 0){
       let obj = {
         "h": ('0' + hours).slice(2),
-        "m": ('-0'+('0' + minutes).slice(2)),
-        "s": ('-0'+('0' + seconds).slice(2))
+        "m": (('0' + minutes).slice(2)),
+        "s": (('0' + seconds).slice(2))
       };
+      fontTime.color='red'
       return obj
     }
       let obj = {
@@ -77,6 +79,16 @@ class Index extends React.Component {
   
   countDown = async() => {
     intervalTime = setInterval(() => {
+      if(this.state.time.h==='00',this.state.time.m==='00',this.state.time.s==='00'){
+        clearInterval(intervalTime)
+        this.setTimeShow(0,2)
+        intervalTime = setInterval(() => {
+          this.setState({
+            time: this.secondsToTime(this.state.seconds + 1),
+            seconds: this.state.seconds + 1,
+          })
+        },1000)
+      }
       this.setState({
         time: this.secondsToTime(this.state.seconds - 1),
         seconds: this.state.seconds - 1,
@@ -124,6 +136,10 @@ class Index extends React.Component {
       })
     }, 1000)
   }
+  color = ()=>{
+ fontTime.color='black';
+ socket.emit('colorchange','white')
+  }
 
   render() {
     return (
@@ -131,23 +147,23 @@ class Index extends React.Component {
         <Container>
           <Row>
             <Col className="d-flex justify-content-center">
-              <FontTime> {this.state.time.m} : {this.state.time.s}</FontTime>
+              <FontTime color={fontTime.color}> {this.state.time.m} : {this.state.time.s}</FontTime>
             </Col>
           </Row>
           <Row>
             <Col className='d-flex justify-content-center'>
               <ButtonTimer onClick={() => this.startTime(this.state.message)}>เริ่ม</ButtonTimer>
               <ButtonTimer onClick={() => this.stopTimer(this.state.time)}>หยุด</ButtonTimer>
-              <ButtonTimer onClick={this.resume}>เล่นต่อ</ButtonTimer>
               <ButtonTimer onClick={this.reset}>เริ่มใหม่</ButtonTimer>
             </Col>
           </Row>
           <Row>
             <Col className='d-flex justify-content-center'>
-              <ButtonEvent onClick={() => this.setTime(180,1)}>เตรียมสถานที่(3 นาที)</ButtonEvent>
+              <ButtonEvent onClick={() => this.setTime(2,1)}>เตรียมสถานที่(3 นาที)</ButtonEvent>
               <ButtonEvent onClick={() => this.setTimeShow(0,2)}>การแสดง (12-15 นาที)</ButtonEvent>
               <ButtonEvent onClick={() => this.setTime(2,3)}>เก็บสถานที่ (2 นาที)</ButtonEvent>
             </Col>
+            <ButtonEvent onClick={this.color}>black</ButtonEvent>
           </Row>
         </Container>
       </Container>
