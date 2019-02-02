@@ -9,5 +9,6 @@ export default {
   body: '14px',
   caption: '12px',
   subcaption: '10px',
-  timeout : '150px'
+  timeout : '150px',
+  color:'black'
 }
