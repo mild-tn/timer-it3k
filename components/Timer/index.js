@@ -19,6 +19,7 @@ const Landing = styled.div`
 const socket = socketIOClient(ENV.PATH_SOCKET)
 
 const FontTime = styled.div`
+  font-family: 'Kanit', sans-serif;
   color: white;
   font-size : ${fontTime.timeout};
   @media (max-width:990px) {
@@ -28,6 +29,20 @@ const FontTime = styled.div`
     font-size : 100px;
 	}
 `
+
+const FontSituation = styled.div`
+  font-family: 'Kanit', sans-serif;
+  color: white;
+  font-size : 80px;
+  @media (max-width:990px) {
+    font-size : 60px;
+	}
+  @media (max-width:770px) {
+    font-size : 50px;
+	}
+`
+
+
 let intervalTime;
 
 let timeDefualt;
@@ -168,7 +183,7 @@ class Index extends React.Component {
           </Row>
           <Row>
             <Col className="d-flex justify-content-center">
-              <FontTime>{setSituation[this.state.event]}</FontTime>
+              <FontSituation>{setSituation[this.state.event]}</FontSituation>
             </Col>
           </Row>
         </Container>
