@@ -55,7 +55,7 @@ class Index extends React.Component {
   }
   
   setTime(timer,event) {
-    // let date = new Date().setMinutes(new Date().getMinutes() + 5);
+    // let date = new Date().setMinutes(new Date().getMinutes() + time);
     let timeLeftVar = this.secondsToTime(timer);
     timeDefualt = timer
     this.setState({
